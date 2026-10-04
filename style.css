@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  background: #fdf8f3;
+  color: #2b2420;
+  font-family: sans-serif;
+}
+
+h1 {
+  margin: 0;
+  padding: 16px;
+  font-size: 1.3rem;
+  background: #e8743b;
+  color: white;
+}
+
+p {
+  padding: 0 16px;
+  color: #8a7d74;
+}
