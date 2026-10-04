@@ -17,3 +17,12 @@ p {
   padding: 0 16px;
   color: #8a7d74;
 }
+button {
+  margin: 0 16px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #e8743b;
+  color: white;
+  font-size: 1rem;
+}
