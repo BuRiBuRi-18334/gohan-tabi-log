@@ -1,10 +1,48 @@
+// ===== 写真 =====
 const photoInput = document.getElementById('photo-input');
 const photoPreview = document.getElementById('photo-preview');
+let selectedPhoto = null; // 選んだ写真（小さくしたもの）
 
-photoInput.addEventListener('change', () => {
+// 写真ファイルを画像として読み込む
+function loadImage(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('画像を読み込めませんでした'));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+// 画像を、長い辺が maxSize ピクセルになるように縮めて、JPEG にする
+function shrinkImage(img, maxSize) {
+  const scale = Math.min(1, maxSize / Math.max(img.naturalWidth, img.naturalHeight));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(img.naturalWidth * scale);
+  canvas.height = Math.round(img.naturalHeight * scale);
+  canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+  return new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.85));
+}
+
+// 写真を選んだら、保存用と一覧用の2つを作る
+photoInput.addEventListener('change', async () => {
   const file = photoInput.files[0];
   if (!file) return;
-  photoPreview.src = URL.createObjectURL(file);
+
+  try {
+    const img = await loadImage(file);
+    selectedPhoto = {
+      photo: await shrinkImage(img, 1600),
+      thumb: await shrinkImage(img, 480),
+    };
+  } catch (error) {
+    alert('この写真は読み込めませんでした');
+    return;
+  }
+
+  photoPreview.src = URL.createObjectURL(selectedPhoto.photo);
+
+  const kb = (blob) => Math.round(blob.size / 1024) + 'KB';
+  console.log('元の写真', kb(file), '→ 保存用', kb(selectedPhoto.photo), '→ 一覧用', kb(selectedPhoto.thumb));
 });
 const prefInput = document.getElementById('pref-input');
 const cityInput = document.getElementById('city-input');
