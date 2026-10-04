@@ -66,13 +66,6 @@ prefInput.addEventListener('change', () => {
 // 食べた日に、最初から今日の日付を入れておく
 dateInput.value = new Date().toLocaleDateString('sv-SE');
 
-// 保存ボタンを押したとき（本当の保存はレッスン8で作ります）
-const recordForm = document.getElementById('record-form');
-recordForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-  const name = document.getElementById('name-input').value;
-  alert(`${prefInput.value} ${cityInput.value} の「${name}」を記録します`);
-});
 // ===== 保存した記録 =====
 let records = [];
 const recordCount = document.getElementById('record-count');
@@ -88,3 +81,46 @@ async function init() {
 }
 
 init();
+// ===== 保存ボタンを押したとき =====
+const recordForm = document.getElementById('record-form');
+const nameInput = document.getElementById('name-input');
+const memoInput = document.getElementById('memo-input');
+
+recordForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  if (!selectedPhoto) {
+    alert('写真を選んでください');
+    return;
+  }
+
+  // 記録1件分を、1つの箱にまとめる
+  const record = {
+    id: Date.now(),
+    photo: selectedPhoto.photo,
+    thumb: selectedPhoto.thumb,
+    name: nameInput.value,
+    pref: prefInput.value,
+    city: cityInput.value,
+    date: dateInput.value,
+    memo: memoInput.value,
+  };
+
+  try {
+    await recordStore.save(record);
+  } catch (error) {
+    alert('保存できませんでした。スマホやパソコンの空き容量を確認してください');
+    return;
+  }
+
+  records.push(record);
+  showCount();
+  alert(`「${record.name}」を保存しました！`);
+
+  // 次の記録のために、写真・料理名・メモを空に戻す（県・市町村・日付はそのまま）
+  selectedPhoto = null;
+  photoInput.value = '';
+  photoPreview.removeAttribute('src');
+  nameInput.value = '';
+  memoInput.value = '';
+});
