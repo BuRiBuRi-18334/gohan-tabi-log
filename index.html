@@ -50,6 +50,19 @@
   </dialog>
   <ul id="list" class="grid"></ul>
 <button type="button" id="add-btn" class="fab">＋</button>
+  <dialog id="detail-dialog">
+    <img id="detail-photo" alt="">
+    <div class="detail-body">
+      <h2 id="detail-name"></h2>
+      <p id="detail-place"></p>
+      <p id="detail-date"></p>
+      <p id="detail-memo"></p>
+      <div class="actions">
+        <button type="button" id="delete-btn" class="danger">削除</button>
+        <button type="button" id="close-btn">閉じる</button>
+      </div>
+    </div>
+  </dialog>
   <script src="cities.js"></script>
     <script src="db.js"></script>
   <script src="app.js"></script>

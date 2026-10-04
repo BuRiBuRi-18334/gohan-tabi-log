@@ -94,6 +94,7 @@ function renderList() {
     li.querySelector('.card-name').textContent = record.name;
     li.querySelector('.card-place').textContent = `${record.pref} ${record.city}`;
     li.querySelector('.card-date').textContent = record.date.replaceAll('-', '/');
+        li.addEventListener('click', () => openDetail(record));
     list.append(li);
   }
 }
@@ -158,4 +159,42 @@ recordForm.addEventListener('submit', async (event) => {
   photoPreview.removeAttribute('src');
   nameInput.value = '';
   memoInput.value = '';
+});
+// ===== 詳細のポップアップ =====
+const detailDialog = document.getElementById('detail-dialog');
+let viewingRecord = null; // 詳細を表示している記録
+
+function openDetail(record) {
+  viewingRecord = record;
+  document.getElementById('detail-photo').src = URL.createObjectURL(record.photo);
+  document.getElementById('detail-name').textContent = record.name;
+  document.getElementById('detail-place').textContent = `${record.pref} ${record.city}`;
+  document.getElementById('detail-date').textContent = record.date.replaceAll('-', '/');
+  document.getElementById('detail-memo').textContent = record.memo;
+  detailDialog.showModal();
+}
+
+document.getElementById('close-btn').addEventListener('click', () => {
+  detailDialog.close();
+});
+
+// 写真の外側（暗いところ）を押しても閉じる
+detailDialog.addEventListener('click', (event) => {
+  if (event.target === detailDialog) detailDialog.close();
+});
+
+document.getElementById('delete-btn').addEventListener('click', async () => {
+  if (!confirm(`「${viewingRecord.name}」を削除しますか？（元に戻せません）`)) return;
+
+  try {
+    await recordStore.remove(viewingRecord.id);
+  } catch (error) {
+    alert('削除できませんでした');
+    return;
+  }
+
+  records = records.filter((r) => r.id !== viewingRecord.id);
+  showCount();
+  renderList();
+  detailDialog.close();
 });
