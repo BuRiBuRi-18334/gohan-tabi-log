@@ -73,11 +73,35 @@ const recordCount = document.getElementById('record-count');
 function showCount() {
   recordCount.textContent = `保存した記録：${records.length}件`;
 }
+// 一覧を表示する
+const list = document.getElementById('list');
 
+function renderList() {
+  list.innerHTML = '';
+  records.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+
+  for (const record of records) {
+    const li = document.createElement('li');
+    li.className = 'card';
+    li.innerHTML = `
+      <img alt="">
+      <div class="card-info">
+        <div class="card-name"></div>
+        <div class="card-place"></div>
+        <div class="card-date"></div>
+      </div>`;
+    li.querySelector('img').src = URL.createObjectURL(record.thumb);
+    li.querySelector('.card-name').textContent = record.name;
+    li.querySelector('.card-place').textContent = `${record.pref} ${record.city}`;
+    li.querySelector('.card-date').textContent = record.date.replaceAll('-', '/');
+    list.append(li);
+  }
+}
 // アプリを開いたときに、倉庫から記録を全部出してくる
 async function init() {
   records = await recordStore.getAll();
   showCount();
+    renderList();
 }
 
 init();
@@ -115,6 +139,7 @@ recordForm.addEventListener('submit', async (event) => {
 
   records.push(record);
   showCount();
+    renderList();
   alert(`「${record.name}」を保存しました！`);
 
   // 次の記録のために、写真・料理名・メモを空に戻す（県・市町村・日付はそのまま）
