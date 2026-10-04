@@ -9,10 +9,41 @@
 <body>
   <h1>ごはん旅ログ</h1>
   <p>旅先で食べたごはんの記録</p>
-    <button id="add-btn">＋ 記録する</button>
-  <p id="message"></p>
-    <input type="file" id="photo-input" accept="image/*">
-  <img id="photo-preview" alt="">
+
+  <form id="record-form">
+    <label>写真
+      <input type="file" id="photo-input" accept="image/*">
+    </label>
+    <img id="photo-preview" alt="">
+
+    <label>料理名
+      <input type="text" id="name-input" placeholder="例：味噌ラーメン" required>
+    </label>
+
+    <label>都道府県
+      <select id="pref-input" required>
+        <option value="">選んでください</option>
+      </select>
+    </label>
+
+    <label>市町村
+      <select id="city-input">
+        <option value="">選ばない</option>
+      </select>
+    </label>
+
+    <label>食べた日
+      <input type="date" id="date-input" required>
+    </label>
+
+    <label>メモ
+      <textarea id="memo-input" rows="2" placeholder="お店の名前や感想など"></textarea>
+    </label>
+
+    <button type="submit">保存</button>
+  </form>
+
+  <script src="cities.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
