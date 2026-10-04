@@ -105,6 +105,16 @@ async function init() {
 }
 
 init();
+// ===== 入力フォームのポップアップ =====
+const formDialog = document.getElementById('form-dialog');
+
+document.getElementById('add-btn').addEventListener('click', () => {
+  formDialog.showModal();
+});
+
+document.getElementById('cancel-btn').addEventListener('click', () => {
+  formDialog.close();
+});
 // ===== 保存ボタンを押したとき =====
 const recordForm = document.getElementById('record-form');
 const nameInput = document.getElementById('name-input');
@@ -140,7 +150,7 @@ recordForm.addEventListener('submit', async (event) => {
   records.push(record);
   showCount();
     renderList();
-  alert(`「${record.name}」を保存しました！`);
+    formDialog.close();
 
   // 次の記録のために、写真・料理名・メモを空に戻す（県・市町村・日付はそのまま）
   selectedPhoto = null;
