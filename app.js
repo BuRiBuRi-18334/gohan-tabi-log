@@ -35,3 +35,18 @@ recordForm.addEventListener('submit', (event) => {
   const name = document.getElementById('name-input').value;
   alert(`${prefInput.value} ${cityInput.value} の「${name}」を記録します`);
 });
+// ===== 保存した記録 =====
+let records = [];
+const recordCount = document.getElementById('record-count');
+
+function showCount() {
+  recordCount.textContent = `保存した記録：${records.length}件`;
+}
+
+// アプリを開いたときに、倉庫から記録を全部出してくる
+async function init() {
+  records = await recordStore.getAll();
+  showCount();
+}
+
+init();
