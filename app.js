@@ -73,14 +73,41 @@ const recordCount = document.getElementById('record-count');
 function showCount() {
   recordCount.textContent = `保存した記録：${records.length}件`;
 }
+// ===== 県で絞り込む =====
+const filterPref = document.getElementById('filter-pref');
+
+// 記録がある県だけで、絞り込みのリストを作り直す（件数つき）
+function updateFilterOptions() {
+  const current = filterPref.value;
+
+  // 県ごとに記録の数を数える
+  const counts = {};
+  for (const record of records) {
+    counts[record.pref] = (counts[record.pref] || 0) + 1;
+  }
+
+  filterPref.length = 1;
+  filterPref.options[0].textContent = `すべての県（${records.length}）`;
+  for (const pref of Object.keys(CITY_DATA)) {
+    if (counts[pref]) {
+      filterPref.add(new Option(`${pref}（${counts[pref]}）`, pref));
+    }
+  }
+  filterPref.value = counts[current] ? current : '';
+}
+
+filterPref.addEventListener('change', renderList);
+
 // 一覧を表示する
 const list = document.getElementById('list');
 
 function renderList() {
   list.innerHTML = '';
+    updateFilterOptions();
   records.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
 
   for (const record of records) {
+        if (filterPref.value && record.pref !== filterPref.value) continue;
     const li = document.createElement('li');
     li.className = 'card';
     li.innerHTML = `
