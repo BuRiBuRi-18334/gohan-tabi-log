@@ -54,14 +54,17 @@ for (const pref of Object.keys(CITY_DATA)) {
 }
 
 // 県を選んだら、その県の市町村リストを作り直す
-prefInput.addEventListener('change', () => {
+function updateCityOptions() {
   cityInput.length = 1;
   const data = CITY_DATA[prefInput.value];
   if (!data) return;
   for (const city of data.cities) {
     cityInput.add(new Option(city.name, city.name));
   }
-});
+}
+
+// 県を選んだら、市町村のリストを作り直す
+prefInput.addEventListener('change', updateCityOptions);
 
 // 食べた日に、最初から今日の日付を入れておく
 dateInput.value = new Date().toLocaleDateString('sv-SE');
