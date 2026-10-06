@@ -181,6 +181,11 @@ function openForm(record) {
   } else {
     formTitle.textContent = 'ごはんを記録';
     dateInput.value = new Date().toLocaleDateString('sv-SE');
+        // 前回新しく記録した県と市町村を入れておく
+    const last = JSON.parse(localStorage.getItem('lastPlace') || '{}');
+    prefInput.value = last.pref || '';
+    updateCityOptions();
+    cityInput.value = last.city || '';
   }
     rankInput.value = record ? getRank(record) : 0;
   formDialog.showModal();
@@ -236,6 +241,10 @@ recordForm.addEventListener('submit', async (event) => {
     return;
   }
     setRank(record.id, Number(rankInput.value));
+      // 新しい記録なら、県と市町村を覚えておく（次の記録で最初から入れるため）
+  if (!editingRecord) {
+    localStorage.setItem('lastPlace', JSON.stringify({ pref: record.pref, city: record.city }));
+  }
   records = records.filter((r) => r.id !== record.id);
   records.push(record);
   showCount();
