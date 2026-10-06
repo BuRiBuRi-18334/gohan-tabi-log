@@ -65,6 +65,25 @@ function updateCityOptions() {
 
 // 県を選んだら、市町村のリストを作り直す
 prefInput.addEventListener('change', updateCityOptions);
+// ===== トップ3 =====
+// 1位から順に、記録のIDを並べた名簿（最大3つ）。ブラウザの localStorage にしまっておく
+let top3 = JSON.parse(localStorage.getItem('top3') || '[]');
+const MEDALS = ['', '🥇', '🥈', '🥉'];
+
+// 記録の順位を調べる（1〜3。トップ3でなければ 0）
+function getRank(record) {
+  return top3.indexOf(record.id) + 1;
+}
+
+// 記録の順位を決める（0 なら順位を外す）。ほかの記録は1つずつずれる
+function setRank(id, rank) {
+  top3 = top3.filter((x) => x !== id);
+  if (rank > 0) {
+    top3.splice(rank - 1, 0, id);
+  }
+  top3 = top3.slice(0, 3);
+  localStorage.setItem('top3', JSON.stringify(top3));
+}
 
 // ===== 保存した記録 =====
 let records = [];
@@ -155,6 +174,7 @@ function openForm(record) {
     formTitle.textContent = 'ごはんを記録';
     dateInput.value = new Date().toLocaleDateString('sv-SE');
   }
+    rankInput.value = record ? getRank(record) : 0;
   formDialog.showModal();
 }
 
@@ -179,6 +199,7 @@ formDialog.addEventListener('close', () => {
 const recordForm = document.getElementById('record-form');
 const nameInput = document.getElementById('name-input');
 const memoInput = document.getElementById('memo-input');
+const rankInput = document.getElementById('rank-input');
 
 recordForm.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -206,6 +227,7 @@ recordForm.addEventListener('submit', async (event) => {
     alert('保存できませんでした。スマホやパソコンの空き容量を確認してください');
     return;
   }
+    setRank(record.id, Number(rankInput.value));
   records = records.filter((r) => r.id !== record.id);
   records.push(record);
   showCount();
@@ -244,7 +266,7 @@ document.getElementById('delete-btn').addEventListener('click', async () => {
     alert('削除できませんでした');
     return;
   }
-
+  setRank(viewingRecord.id, 0);
   records = records.filter((r) => r.id !== viewingRecord.id);
   showCount();
   renderList();
