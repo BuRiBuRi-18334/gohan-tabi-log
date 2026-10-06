@@ -249,3 +249,36 @@ dialog h2 {
   border-radius: 50%;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
+
+/* ===== トップ3の写真（地図） ===== */
+.photo-marker .medal {
+  top: -10px;
+  left: -10px;
+  font-size: 1.6rem;
+}
+
+.rank-1 img {
+  border: 5px solid #d4a017; /* 金 */
+}
+
+.rank-2 img {
+  border: 5px solid #b8b8b8; /* 銀 */
+}
+
+.rank-3 img {
+  border: 5px solid #c47a3d; /* 銅 */
+}
+
+/* ===== まとまった写真（地図） ===== */
+.photo-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+  border-radius: 50%;
+  background: #e8743b;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}

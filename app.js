@@ -316,14 +316,16 @@ function getLatLng(record) {
   return [city.lat, city.lng];
 }
 
-// 地図に置く、丸い写真の目印を作る
-function photoIcon(record) {
+// 地図に置く、丸い写真の目印を作る（トップ3は大きく、枠の色とメダル付き）
+function photoIcon(record, rank) {
+  const size = rank > 0 ? 64 : 48;
   return L.divIcon({
-    html: `<img src="${URL.createObjectURL(record.thumb)}" alt="">`,
-    className: 'photo-marker',
-    iconSize: [48, 48],
+    html: `<img src="${URL.createObjectURL(record.thumb)}" alt=""><span class="medal">${MEDALS[rank]}</span>`,
+    className: `photo-marker rank-${rank}`,
+    iconSize: [size, size],
   });
 }
+
 function renderMap() {
   // インターネットにつながっていなくて、地図の部品を読み込めなかったとき
   if (typeof L === 'undefined') {
@@ -346,13 +348,33 @@ function renderMap() {
   if (markerLayer) markerLayer.remove();
   markerLayer = L.layerGroup().addTo(map);
 
+  // 近くの写真をまとめる袋（トップ3は入れない）
+  const cluster = L.markerClusterGroup({
+    showCoverageOnHover: false,
+    spiderfyDistanceMultiplier: 2,
+    iconCreateFunction: (group) => L.divIcon({
+      html: `<span>${group.getChildCount()}</span>`,
+      className: 'photo-cluster',
+      iconSize: [44, 44],
+    }),
+  });
+  markerLayer.addLayer(cluster);
+
   const places = [];
   for (const record of records) {
     if (filterPref.value && record.pref !== filterPref.value) continue;
     const place = getLatLng(record);
-    const marker = L.marker(place, { icon: photoIcon(record) });
+        const rank = getRank(record);
+    const marker = L.marker(place, {
+      icon: photoIcon(record, rank),
+      zIndexOffset: rank > 0 ? 10000 - rank : 0,
+    });
     marker.on('click', () => openDetail(record));
-    markerLayer.addLayer(marker);
+    if (rank > 0) {
+      markerLayer.addLayer(marker); // トップ3はまとめずに、いつも見えるようにする
+    } else {
+      cluster.addLayer(marker);
+    }
     places.push(place);
   }
 
