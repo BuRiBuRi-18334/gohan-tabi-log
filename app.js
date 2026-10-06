@@ -424,3 +424,13 @@ function renderMap() {
     map.setView([36.5, 137.5], 5);
   }
 }
+
+// ===== 電波がなくても開けるようにする =====
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+
+// ブラウザに「このアプリの記録を勝手に消さないで」とお願いする
+if (navigator.storage && navigator.storage.persist) {
+  navigator.storage.persist();
+}
