@@ -150,6 +150,7 @@ function renderList() {
         li.addEventListener('click', () => openDetail(record));
     list.append(li);
   }
+    if (showingMap) renderMap();
 }
 // アプリを開いたときに、倉庫から記録を全部出してくる
 async function init() {
@@ -305,7 +306,24 @@ tabMap.addEventListener('click', () => showView(true));
 
 // ===== 地図 =====
 let map = null; // 地図（最初に開いたときに作る）
+let markerLayer = null; // 地図の上に置いた写真のまとまり
 
+// 記録の位置（緯度・経度）を調べる。市町村を選んでいなければ県庁所在地
+function getLatLng(record) {
+  const data = CITY_DATA[record.pref];
+  const cityName = record.city || data.capital;
+  const city = data.cities.find((c) => c.name === cityName);
+  return [city.lat, city.lng];
+}
+
+// 地図に置く、丸い写真の目印を作る
+function photoIcon(record) {
+  return L.divIcon({
+    html: `<img src="${URL.createObjectURL(record.thumb)}" alt="">`,
+    className: 'photo-marker',
+    iconSize: [48, 48],
+  });
+}
 function renderMap() {
   // インターネットにつながっていなくて、地図の部品を読み込めなかったとき
   if (typeof L === 'undefined') {
@@ -319,9 +337,29 @@ function renderMap() {
     L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png', {
       attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
     }).addTo(map);
-    map.setView([36.5, 137.5], 5);
   }
 
   // 隠れていた地図を表示したときは、大きさを測り直す
   map.invalidateSize();
+  
+  // 前に置いた写真を片付けてから、置き直す
+  if (markerLayer) markerLayer.remove();
+  markerLayer = L.layerGroup().addTo(map);
+
+  const places = [];
+  for (const record of records) {
+    if (filterPref.value && record.pref !== filterPref.value) continue;
+    const place = getLatLng(record);
+    const marker = L.marker(place, { icon: photoIcon(record) });
+    marker.on('click', () => openDetail(record));
+    markerLayer.addLayer(marker);
+    places.push(place);
+  }
+
+  // 写真が全部入るように、地図の範囲を合わせる
+  if (places.length > 0) {
+    map.fitBounds(places, { padding: [40, 40], maxZoom: 12 });
+  } else {
+    map.setView([36.5, 137.5], 5);
+  }
 }
