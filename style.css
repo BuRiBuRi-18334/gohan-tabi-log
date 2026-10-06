@@ -306,3 +306,13 @@ dialog h2 {
   font-size: 1.8rem;
   line-height: 1;
 }
+
+.card-stars {
+  font-size: 0.8rem;
+  color: #e8a33b;
+}
+
+#detail-stars {
+  font-size: 1.2rem;
+  color: #e8a33b;
+}

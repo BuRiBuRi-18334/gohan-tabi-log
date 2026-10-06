@@ -103,6 +103,11 @@ starInput.addEventListener('click', (event) => {
   if (!value) return;
   showStars(value === rating ? 0 : value);
 });
+
+// ★の数を「★★★★☆」の文字にする（評価なしなら空っぽ）
+function starText(value) {
+  return value ? '★'.repeat(value) + '☆'.repeat(5 - value) : '';
+}
 // ===== 保存した記録 =====
 let records = [];
 const recordCount = document.getElementById('record-count');
@@ -151,11 +156,13 @@ function renderList() {
       <img alt="">
       <div class="card-info">
         <div class="card-name"></div>
+                <div class="card-stars"></div>
         <div class="card-place"></div>
         <div class="card-date"></div>
       </div>`;
     li.querySelector('img').src = URL.createObjectURL(record.thumb);
     li.querySelector('.card-name').textContent = record.name;
+        li.querySelector('.card-stars').textContent = starText(record.rating);
     li.querySelector('.card-place').textContent = `${record.pref} ${record.city}`;
     li.querySelector('.card-date').textContent = record.date.replaceAll('-', '/');
         const rank = getRank(record);
@@ -279,6 +286,7 @@ function openDetail(record) {
   viewingRecord = record;
   document.getElementById('detail-photo').src = URL.createObjectURL(record.photo);
   document.getElementById('detail-name').textContent = MEDALS[getRank(record)] + record.name;
+    document.getElementById('detail-stars').textContent = starText(record.rating);
   document.getElementById('detail-place').textContent = `${record.pref} ${record.city}`;
   document.getElementById('detail-date').textContent = record.date.replaceAll('-', '/');
   document.getElementById('detail-memo').textContent = record.memo;
