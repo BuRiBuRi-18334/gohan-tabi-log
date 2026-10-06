@@ -140,6 +140,13 @@ function renderList() {
     li.querySelector('.card-name').textContent = record.name;
     li.querySelector('.card-place').textContent = `${record.pref} ${record.city}`;
     li.querySelector('.card-date').textContent = record.date.replaceAll('-', '/');
+        const rank = getRank(record);
+    if (rank > 0) {
+      const medal = document.createElement('span');
+      medal.className = 'medal';
+      medal.textContent = MEDALS[rank];
+      li.append(medal);
+    }
         li.addEventListener('click', () => openDetail(record));
     list.append(li);
   }
@@ -241,7 +248,7 @@ let viewingRecord = null; // 詳細を表示している記録
 function openDetail(record) {
   viewingRecord = record;
   document.getElementById('detail-photo').src = URL.createObjectURL(record.photo);
-  document.getElementById('detail-name').textContent = record.name;
+　document.getElementById('detail-name').textContent = MEDALS[getRank(record)] + record.name;
   document.getElementById('detail-place').textContent = `${record.pref} ${record.city}`;
   document.getElementById('detail-date').textContent = record.date.replaceAll('-', '/');
   document.getElementById('detail-memo').textContent = record.memo;
