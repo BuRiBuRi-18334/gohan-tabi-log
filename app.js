@@ -248,7 +248,7 @@ let viewingRecord = null; // 詳細を表示している記録
 function openDetail(record) {
   viewingRecord = record;
   document.getElementById('detail-photo').src = URL.createObjectURL(record.photo);
-　document.getElementById('detail-name').textContent = MEDALS[getRank(record)] + record.name;
+  document.getElementById('detail-name').textContent = MEDALS[getRank(record)] + record.name;
   document.getElementById('detail-place').textContent = `${record.pref} ${record.city}`;
   document.getElementById('detail-date').textContent = record.date.replaceAll('-', '/');
   document.getElementById('detail-memo').textContent = record.memo;
@@ -284,3 +284,44 @@ document.getElementById('edit-btn').addEventListener('click', () => {
   detailDialog.close();
   openForm(viewingRecord);
 });
+
+// ===== 一覧と地図の切り替え =====
+const tabList = document.getElementById('tab-list');
+const tabMap = document.getElementById('tab-map');
+const mapBox = document.getElementById('map');
+let showingMap = false; // 地図を表示しているかどうか
+
+function showView(mapMode) {
+  showingMap = mapMode;
+  list.hidden = mapMode;
+  mapBox.hidden = !mapMode;
+  tabList.classList.toggle('active', !mapMode);
+  tabMap.classList.toggle('active', mapMode);
+  if (mapMode) renderMap();
+}
+
+tabList.addEventListener('click', () => showView(false));
+tabMap.addEventListener('click', () => showView(true));
+
+// ===== 地図 =====
+let map = null; // 地図（最初に開いたときに作る）
+
+function renderMap() {
+  // インターネットにつながっていなくて、地図の部品を読み込めなかったとき
+  if (typeof L === 'undefined') {
+    mapBox.textContent = '地図を表示するには、インターネットにつながっている必要があります';
+    return;
+  }
+
+  // 最初に開いたときだけ、地図を作る
+  if (!map) {
+    map = L.map(mapBox, { minZoom: 4, maxZoom: 18 });
+    L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png', {
+      attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
+    }).addTo(map);
+    map.setView([36.5, 137.5], 5);
+  }
+
+  // 隠れていた地図を表示したときは、大きさを測り直す
+  map.invalidateSize();
+}

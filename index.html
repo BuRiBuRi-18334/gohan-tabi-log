@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>ごはん旅ログ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -61,7 +62,12 @@
     </div>
   </form>
   </dialog>
+    <nav class="tabs">
+    <button type="button" id="tab-list" class="tab active">一覧</button>
+    <button type="button" id="tab-map" class="tab">地図</button>
+  </nav>
   <ul id="list" class="grid"></ul>
+    <div id="map" hidden></div>
 <button type="button" id="add-btn" class="fab">＋</button>
   <dialog id="detail-dialog">
     <img id="detail-photo" alt="">
@@ -77,6 +83,7 @@
       </div>
     </div>
   </dialog>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="cities.js"></script>
     <script src="db.js"></script>
   <script src="app.js"></script>
