@@ -66,9 +66,6 @@ function updateCityOptions() {
 // 県を選んだら、市町村のリストを作り直す
 prefInput.addEventListener('change', updateCityOptions);
 
-// 食べた日に、最初から今日の日付を入れておく
-dateInput.value = new Date().toLocaleDateString('sv-SE');
-
 // ===== 保存した記録 =====
 let records = [];
 const recordCount = document.getElementById('record-count');
@@ -111,14 +108,46 @@ async function init() {
 init();
 // ===== 入力フォームのポップアップ =====
 const formDialog = document.getElementById('form-dialog');
+const formTitle = document.getElementById('form-title');
+let editingRecord = null; // 編集中の記録（新しく記録するときは null）
+
+// フォームを開く（記録を渡すと編集、null なら新しい記録）
+function openForm(record) {
+  editingRecord = record;
+  if (record) {
+    formTitle.textContent = '記録を編集';
+    selectedPhoto = { photo: record.photo, thumb: record.thumb };
+    photoPreview.src = URL.createObjectURL(record.photo);
+    nameInput.value = record.name;
+    prefInput.value = record.pref;
+    updateCityOptions();
+    cityInput.value = record.city;
+    dateInput.value = record.date;
+    memoInput.value = record.memo;
+  } else {
+    formTitle.textContent = 'ごはんを記録';
+    dateInput.value = new Date().toLocaleDateString('sv-SE');
+  }
+  formDialog.showModal();
+}
 
 document.getElementById('add-btn').addEventListener('click', () => {
-  formDialog.showModal();
+  openForm(null);
 });
 
 document.getElementById('cancel-btn').addEventListener('click', () => {
   formDialog.close();
 });
+
+// フォームを閉じたら、写真・料理名・メモを空に戻す（県・市町村はそのまま）
+formDialog.addEventListener('close', () => {
+  selectedPhoto = null;
+  photoInput.value = '';
+  photoPreview.removeAttribute('src');
+  nameInput.value = '';
+  memoInput.value = '';
+});
+
 // ===== 保存ボタンを押したとき =====
 const recordForm = document.getElementById('record-form');
 const nameInput = document.getElementById('name-input');
