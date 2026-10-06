@@ -85,6 +85,24 @@ function setRank(id, rank) {
   localStorage.setItem('top3', JSON.stringify(top3));
 }
 
+// ===== ★の評価 =====
+const starInput = document.getElementById('star-input');
+let rating = 0; // フォームで選んでいる★の数（0 は評価なし）
+
+// 選んだ数まで★、残りを☆にする
+function showStars(value) {
+  rating = value;
+  for (const star of starInput.querySelectorAll('button')) {
+    star.textContent = Number(star.dataset.value) <= value ? '★' : '☆';
+  }
+}
+
+// ☆を押したら、その数まで★にする（同じ★をもう一度押したら評価なし）
+starInput.addEventListener('click', (event) => {
+  const value = Number(event.target.dataset.value);
+  if (!value) return;
+  showStars(value === rating ? 0 : value);
+});
 // ===== 保存した記録 =====
 let records = [];
 const recordCount = document.getElementById('record-count');
@@ -188,6 +206,7 @@ function openForm(record) {
     cityInput.value = last.city || '';
   }
     rankInput.value = record ? getRank(record) : 0;
+      showStars(record ? record.rating || 0 : 0);
   formDialog.showModal();
 }
 
@@ -232,6 +251,7 @@ recordForm.addEventListener('submit', async (event) => {
     city: cityInput.value,
     date: dateInput.value,
     memo: memoInput.value,
+        rating: rating,
   };
 
   try {
