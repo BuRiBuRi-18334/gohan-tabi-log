@@ -299,7 +299,7 @@ document.getElementById('edit-btn').addEventListener('click', () => {
 const tabList = document.getElementById('tab-list');
 const tabMap = document.getElementById('tab-map');
 const mapBox = document.getElementById('map');
-let showingMap = false; // 地図を表示しているかどうか
+let showingMap = true; // 地図を表示しているかどうか
 
 function showView(mapMode) {
   showingMap = mapMode;
@@ -327,7 +327,7 @@ function getLatLng(record) {
 
 // 地図に置く、丸い写真の目印を作る（トップ3は大きく、枠の色とメダル付き）
 function photoIcon(record, rank) {
-  const size = rank > 0 ? 64 : 48;
+    const size = rank > 0 ? 52 : 40;
   return L.divIcon({
     html: `<img src="${URL.createObjectURL(record.thumb)}" alt=""><span class="medal">${MEDALS[rank]}</span>`,
     className: `photo-marker rank-${rank}`,

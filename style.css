@@ -243,19 +243,19 @@ dialog h2 {
 /* ===== 地図の上の写真 ===== */
 .photo-marker img {
   box-sizing: border-box;
-  width: 100%;
+    width: 100% !important;
   height: 100%;
   object-fit: cover;
   border: 3px solid white;
-  border-radius: 50%;
+  border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
 /* ===== トップ3の写真（地図） ===== */
 .photo-marker .medal {
-  top: -10px;
-  left: -10px;
-  font-size: 1.6rem;
+  top: -8px;
+  left: -8px;
+  font-size: 1.3rem;
 }
 
 .rank-1 img {
