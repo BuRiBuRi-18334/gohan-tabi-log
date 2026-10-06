@@ -344,9 +344,11 @@ function renderMap() {
 
   // 最初に開いたときだけ、地図を作る
   if (!map) {
-    map = L.map(mapBox, { minZoom: 4, maxZoom: 18 });
-    L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png', {
-      attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
+    map = L.map(mapBox, { minZoom: 4, maxZoom: 12 });
+        L.geoJSON(JAPAN_GEO, {
+      style: { color: '#e2d3c3', weight: 1, fillColor: '#fffdf8', fillOpacity: 1 },
+      interactive: false,
+      attribution: 'Natural Earth',
     }).addTo(map);
   }
 

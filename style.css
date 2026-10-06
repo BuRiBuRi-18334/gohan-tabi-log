@@ -237,6 +237,7 @@ dialog h2 {
   height: 70vh;
   margin: 16px;
   border-radius: 12px;
+    background: #dcebf1;
 }
 
 /* ===== 地図の上の写真 ===== */
