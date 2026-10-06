@@ -163,7 +163,7 @@ recordForm.addEventListener('submit', async (event) => {
 
   // 記録1件分を、1つの箱にまとめる
   const record = {
-    id: Date.now(),
+        id: editingRecord ? editingRecord.id : Date.now(),
     photo: selectedPhoto.photo,
     thumb: selectedPhoto.thumb,
     name: nameInput.value,
@@ -179,18 +179,11 @@ recordForm.addEventListener('submit', async (event) => {
     alert('保存できませんでした。スマホやパソコンの空き容量を確認してください');
     return;
   }
-
+  records = records.filter((r) => r.id !== record.id);
   records.push(record);
   showCount();
     renderList();
     formDialog.close();
-
-  // 次の記録のために、写真・料理名・メモを空に戻す（県・市町村・日付はそのまま）
-  selectedPhoto = null;
-  photoInput.value = '';
-  photoPreview.removeAttribute('src');
-  nameInput.value = '';
-  memoInput.value = '';
 });
 // ===== 詳細のポップアップ =====
 const detailDialog = document.getElementById('detail-dialog');
@@ -229,4 +222,9 @@ document.getElementById('delete-btn').addEventListener('click', async () => {
   showCount();
   renderList();
   detailDialog.close();
+});
+
+document.getElementById('edit-btn').addEventListener('click', () => {
+  detailDialog.close();
+  openForm(viewingRecord);
 });
