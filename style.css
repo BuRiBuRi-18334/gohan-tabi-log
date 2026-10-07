@@ -31,13 +31,22 @@ p {
 button {
   margin: 0 16px;
   padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
   background: var(--accent);
   color: white;
   font-size: 1rem;
     font-family: inherit;
+      font-weight: bold;
+  box-shadow: 0 3px 0 var(--ink);
 }
+
+/* 押すとへこむ */
+button:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+
 #photo-preview {
   display: block;
   max-width: 300px;
@@ -75,14 +84,15 @@ textarea {
   padding: 16px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 12px;
+  gap: 16px;
 }
 
 .card {
   background: white;
-  border-radius: 12px;
+    border: 2px solid var(--ink);
+   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+   box-shadow: 0 3px 0 var(--ink);
 }
 
 .card img {
@@ -90,6 +100,7 @@ textarea {
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
+    border-bottom: 2px solid var(--ink);
 }
 
 .card-info {
@@ -113,21 +124,19 @@ textarea {
   position: fixed;
   right: 20px;
   bottom: 20px;
-  width: 60px;
-  height: 60px;
+  height: 54px;
   margin: 0;
-  padding: 0;
-  border-radius: 50%;
-  font-size: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 0 22px 0 18px;
+  font-size: 1.05rem;
+  box-shadow: 0 4px 0 var(--ink);
 }
 
 /* ===== ポップアップ ===== */
 dialog {
   width: min(480px, calc(100% - 32px));
   padding: 0;
-  border: none;
-  border-radius: 16px;
+  border: 2px solid var(--ink);
+  border-radius: 22px;
 }
 
 dialog::backdrop {
@@ -150,9 +159,8 @@ dialog h2 {
 }
 
 .secondary {
-  background: transparent;
+    background: white;
   color: var(--text);
-  border: 1px solid #ece3da;
 }
 /* ===== 詳細 ===== */
 #detail-photo {
@@ -161,6 +169,7 @@ dialog h2 {
   max-height: 60vh;
   object-fit: contain;
   background: black;
+    border-bottom: 2px solid var(--ink);
 }
 
 .detail-body {
@@ -181,6 +190,8 @@ dialog h2 {
   margin-right: auto;
   background: transparent;
   color: #d64545;
+    border-color: transparent;
+  box-shadow: none;
 }
 /* ===== 上の帯（タイトルと絞り込み） ===== */
 .app-header {
@@ -193,15 +204,25 @@ dialog h2 {
   gap: 12px;
   padding: 12px 16px;
   background: var(--accent);
+    border: 2px solid var(--ink);
+  border-top: none;
+  border-radius: 0 0 24px 24px;
 }
 
 .app-header h1 {
   padding: 0;
   white-space: nowrap;
+    letter-spacing: 0.04em;
+  text-shadow: 0 2px 0 var(--ink);
 }
 
 .app-header select {
   min-width: 0;
+    border: 2px solid var(--ink);
+  border-radius: 999px;
+  color: var(--text);
+  font-weight: bold;
+  box-shadow: 0 3px 0 var(--ink);
 }
 
 /* ===== トップ3のメダル ===== */
@@ -226,7 +247,7 @@ dialog h2 {
 /* ===== 一覧と地図の切り替え ===== */
 .tabs {
   display: flex;
-  gap: 8px;
+  gap: 14px;
   padding: 0 16px;
 }
 
@@ -234,14 +255,12 @@ dialog h2 {
   flex: 1;
   margin: 0;
   background: white;
-  color: var(--muted);
-  border: 1px solid #ece3da;
+  color: var(--text);
 }
 
 .tab.active {
   background: var(--accent);
   color: white;
-  border-color: var(--accent);
 }
 
 /* ===== 地図 ===== */
@@ -326,6 +345,8 @@ dialog h2 {
   color: var(--star);
   font-size: 1.8rem;
   line-height: 1;
+    border: none;
+  box-shadow: none;
 }
 
 .card-stars {
