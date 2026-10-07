@@ -268,8 +268,23 @@ dialog h2 {
   z-index: 0;
   height: 70vh;
   margin: 16px;
+  border: 2px solid var(--ink);
+  border-radius: 18px;
+  box-shadow: 0 4px 0 var(--ink);
+  background: #d6eef6;
+}
+
+/* 地図の＋−ボタン */
+#map .leaflet-bar {
+  overflow: hidden;
+  border: 2px solid var(--ink);
   border-radius: 12px;
-    background: #dcebf1;
+  box-shadow: 0 3px 0 var(--ink);
+}
+
+#map .leaflet-bar a {
+  border-bottom-color: var(--ink);
+  color: var(--ink);
 }
 
 /* ===== 地図の上の写真 ===== */
@@ -280,7 +295,7 @@ dialog h2 {
   object-fit: cover;
   border: 3px solid white;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 0 2px var(--ink), 0 3px 0 2px var(--ink);
 }
 
 /* ===== トップ3の写真（地図） ===== */
@@ -315,7 +330,7 @@ dialog h2 {
   min-width: 22px;
   padding: 2px 6px;
   box-sizing: border-box;
-  border: 2px solid white;
+  border: 2px solid var(--ink);
   border-radius: 999px;
   background: var(--accent);
   color: white;

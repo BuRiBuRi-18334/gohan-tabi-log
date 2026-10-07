@@ -382,7 +382,7 @@ function renderMap() {
   if (!map) {
     map = L.map(mapBox, { minZoom: 4, maxZoom: 12 });
         L.geoJSON(JAPAN_GEO, {
-      style: { color: '#e2d3c3', weight: 1, fillColor: '#fffdf8', fillOpacity: 1 },
+      style: { color: '#c9a68c', weight: 1, fillColor: '#fffaf3', fillOpacity: 1 },
       interactive: false,
       attribution: 'Natural Earth',
     }).addTo(map);
@@ -400,6 +400,7 @@ function renderMap() {
         maxClusterRadius: 0.001,
     showCoverageOnHover: false,
     spiderfyDistanceMultiplier: 2,
+        spiderLegPolylineOptions: { color: '#8a5a3c', weight: 2, opacity: 0.8 },
         iconCreateFunction: (group) => {
       const groupRecords = group.getAllChildMarkers().map((m) => m.options.record);
       const best = groupRecords.sort(compareBest)[0];
