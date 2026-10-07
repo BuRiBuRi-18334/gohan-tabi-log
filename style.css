@@ -270,18 +270,26 @@ dialog h2 {
   border: 5px solid #c47a3d; /* 銅 */
 }
 
-/* ===== まとまった写真（地図） ===== */
-.photo-cluster {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 3px solid white;
-  border-radius: 50%;
+/* トップ3の写真は、重なってもいつも手前に出す */
+.rank-1 { z-index: 100003 !important; }
+.rank-2 { z-index: 100002 !important; }
+.rank-3 { z-index: 100001 !important; }
+
+/* ===== 同じ場所の写真の枚数（地図） ===== */
+.photo-marker .count {
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  min-width: 22px;
+  padding: 2px 6px;
+  box-sizing: border-box;
+  border: 2px solid white;
+  border-radius: 999px;
   background: #e8743b;
   color: white;
-  font-size: 1.1rem;
+  font-size: 0.8rem;
   font-weight: bold;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  text-align: center;
 }
 
 /* ===== ★の評価 ===== */

@@ -353,11 +353,19 @@ function getLatLng(record) {
   return [city.lat, city.lng];
 }
 
-// 地図に置く、丸い写真の目印を作る（トップ3は大きく、枠の色とメダル付き）
-function photoIcon(record, rank) {
+// どちらがいい写真か比べる（1位→2位→3位→★が多い→新しい の順で前に来る）
+function compareBest(a, b) {
+  const rankA = getRank(a) || 4;
+  const rankB = getRank(b) || 4;
+  return rankA - rankB || (b.rating || 0) - (a.rating || 0) || b.date.localeCompare(a.date) || b.id - a.id;
+}
+
+// 地図に置く写真の目印を作る（トップ3は大きく、枠の色とメダル付き。count が2以上なら枚数も付ける）
+function photoIcon(record, rank, count) {
     const size = rank > 0 ? 52 : 40;
+      const badge = count > 1 ? `<span class="count">${count}</span>` : '';
   return L.divIcon({
-    html: `<img src="${URL.createObjectURL(record.thumb)}" alt=""><span class="medal">${MEDALS[rank]}</span>`,
+        html: `<img src="${URL.createObjectURL(record.thumb)}" alt=""><span class="medal">${MEDALS[rank]}</span>${badge}`,
     className: `photo-marker rank-${rank}`,
     iconSize: [size, size],
   });
@@ -387,15 +395,16 @@ function renderMap() {
   if (markerLayer) markerLayer.remove();
   markerLayer = L.layerGroup().addTo(map);
 
-  // 近くの写真をまとめる袋（トップ3は入れない）
+    // まったく同じ場所の写真だけをまとめる袋（いちばんいい写真に枚数を付けて表示する）
   const cluster = L.markerClusterGroup({
+        maxClusterRadius: 0.001,
     showCoverageOnHover: false,
     spiderfyDistanceMultiplier: 2,
-    iconCreateFunction: (group) => L.divIcon({
-      html: `<span>${group.getChildCount()}</span>`,
-      className: 'photo-cluster',
-      iconSize: [44, 44],
-    }),
+        iconCreateFunction: (group) => {
+      const groupRecords = group.getAllChildMarkers().map((m) => m.options.record);
+      const best = groupRecords.sort(compareBest)[0];
+      return photoIcon(best, getRank(best), groupRecords.length);
+    },
   });
   markerLayer.addLayer(cluster);
 
@@ -406,14 +415,10 @@ function renderMap() {
         const rank = getRank(record);
     const marker = L.marker(place, {
       icon: photoIcon(record, rank),
-      zIndexOffset: rank > 0 ? 10000 - rank : 0,
+            record: record, // どの記録の写真かを、目印に持たせておく
     });
     marker.on('click', () => openDetail(record));
-    if (rank > 0) {
-      markerLayer.addLayer(marker); // トップ3はまとめずに、いつも見えるようにする
-    } else {
-      cluster.addLayer(marker);
-    }
+        cluster.addLayer(marker); // 全部の写真を袋に入れる（同じ場所のものだけがまとまる）
     places.push(place);
   }
 
