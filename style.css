@@ -1,7 +1,18 @@
+/* ===== 色と文字（ここを変えると、アプリ全体が変わる） ===== */
+:root {
+  --bg: #fff7ef; /* 背景（クリーム色） */
+  --text: #4a3428; /* 文字（こげ茶） */
+  --muted: #9a8070; /* うすい文字 */
+  --accent: #f08a4b; /* やわらかいオレンジ */
+  --star: #f5a623; /* ★ */
+  --ink: #8a5a3c; /* ふち線（茶色）。14-3 から使う */
+  --font: "Hiragino Maru Gothic ProN", sans-serif; /* 丸ゴシック */
+}
+
 body {
   margin: 0;
-  background: #fdf8f3;
-  color: #2b2420;
+  background: var(--bg);
+  color: var(--text);
   font-family: sans-serif;
 }
 
@@ -9,22 +20,23 @@ h1 {
   margin: 0;
   padding: 16px;
   font-size: 1.3rem;
-  background: #e8743b;
+  background: var(--accent);
   color: white;
 }
 
 p {
   padding: 0 16px;
-  color: #8a7d74;
+  color: var(--muted);
 }
 button {
   margin: 0 16px;
   padding: 10px 16px;
   border: none;
   border-radius: 8px;
-  background: #e8743b;
+  background: var(--accent);
   color: white;
   font-size: 1rem;
+    font-family: inherit;
 }
 #photo-preview {
   display: block;
@@ -44,7 +56,7 @@ label {
   flex-direction: column;
   gap: 4px;
   font-size: 0.85rem;
-  color: #8a7d74;
+  color: var(--muted);
 }
 
 input,
@@ -54,6 +66,7 @@ textarea {
   border: 1px solid #ece3da;
   border-radius: 8px;
   font-size: 16px;
+    font-family: inherit;
 }
 /* ===== 一覧 ===== */
 .grid {
@@ -93,7 +106,7 @@ textarea {
 .card-place,
 .card-date {
   font-size: 0.8rem;
-  color: #8a7d74;
+  color: var(--muted);
 }
 /* ===== 右下の＋ボタン ===== */
 .fab {
@@ -138,7 +151,7 @@ dialog h2 {
 
 .secondary {
   background: transparent;
-  color: #2b2420;
+  color: var(--text);
   border: 1px solid #ece3da;
 }
 /* ===== 詳細 ===== */
@@ -160,7 +173,7 @@ dialog h2 {
 }
 
 #detail-memo {
-  color: #2b2420;
+  color: var(--text);
   white-space: pre-wrap;
 }
 
@@ -179,7 +192,7 @@ dialog h2 {
   justify-content: space-between;
   gap: 12px;
   padding: 12px 16px;
-  background: #e8743b;
+  background: var(--accent);
 }
 
 .app-header h1 {
@@ -221,14 +234,14 @@ dialog h2 {
   flex: 1;
   margin: 0;
   background: white;
-  color: #8a7d74;
+  color: var(--muted);
   border: 1px solid #ece3da;
 }
 
 .tab.active {
-  background: #e8743b;
+  background: var(--accent);
   color: white;
-  border-color: #e8743b;
+  border-color: var(--accent);
 }
 
 /* ===== 地図 ===== */
@@ -285,7 +298,7 @@ dialog h2 {
   box-sizing: border-box;
   border: 2px solid white;
   border-radius: 999px;
-  background: #e8743b;
+  background: var(--accent);
   color: white;
   font-size: 0.8rem;
   font-weight: bold;
@@ -298,7 +311,7 @@ dialog h2 {
   flex-direction: column;
   gap: 4px;
   font-size: 0.85rem;
-  color: #8a7d74;
+  color: var(--muted);
 }
 
 .stars {
@@ -310,17 +323,17 @@ dialog h2 {
   margin: 0;
   padding: 0 2px;
   background: none;
-  color: #e8a33b;
+  color: var(--star);
   font-size: 1.8rem;
   line-height: 1;
 }
 
 .card-stars {
   font-size: 0.8rem;
-  color: #e8a33b;
+  color: var(--star);
 }
 
 #detail-stars {
   font-size: 1.2rem;
-  color: #e8a33b;
+  color: var(--star);
 }
