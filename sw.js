@@ -10,6 +10,7 @@ const APP_FILES = [
   './db.js',
   './cities.js',
   './japan.js',
+  './nz.js',
   './manifest.json',
   './apple-touch-icon.png',
   './icon-192.png',

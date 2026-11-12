@@ -48,15 +48,31 @@ const prefInput = document.getElementById('pref-input');
 const cityInput = document.getElementById('city-input');
 const dateInput = document.getElementById('date-input');
 
+// 日本の都道府県とニュージーランドの地方を、まとめて名前で引けるようにしたもの
+const PLACE_DATA = { ...CITY_DATA, ...NZ_CITY_DATA };
+
+// ニュージーランドの地方かどうか
+function isNZ(pref) {
+  return pref in NZ_CITY_DATA;
+}
+
 // 都道府県のリストを作る
 for (const pref of Object.keys(CITY_DATA)) {
   prefInput.add(new Option(pref, pref));
 }
 
+// ニュージーランドの地方は、リストのいちばん下に「ニュージーランド」のまとまりで入れる
+const nzGroup = document.createElement('optgroup');
+nzGroup.label = 'ニュージーランド';
+for (const region of Object.keys(NZ_CITY_DATA)) {
+  nzGroup.append(new Option(region, region));
+}
+prefInput.append(nzGroup);
+
 // 県を選んだら、その県の市町村リストを作り直す
 function updateCityOptions() {
   cityInput.length = 1;
-  const data = CITY_DATA[prefInput.value];
+  const data = PLACE_DATA[prefInput.value];
   if (!data) return;
   for (const city of data.cities) {
     cityInput.add(new Option(city.name, city.name));
@@ -130,9 +146,11 @@ function updateFilterOptions() {
 
   filterPref.length = 1;
   filterPref.options[0].textContent = `すべての県（${records.length}）`;
-  for (const pref of Object.keys(CITY_DATA)) {
+  // 日本の県のあとに、ニュージーランドの地方を 🇳🇿 付きで並べる
+  for (const pref of Object.keys(PLACE_DATA)) {
     if (counts[pref]) {
-      filterPref.add(new Option(`${pref}（${counts[pref]}）`, pref));
+      const flag = isNZ(pref) ? '🇳🇿 ' : '';
+      filterPref.add(new Option(`${flag}${pref}（${counts[pref]}）`, pref));
     }
   }
   filterPref.value = counts[current] ? current : '';
@@ -344,10 +362,12 @@ tabMap.addEventListener('click', () => showView(true));
 // ===== 地図 =====
 let map = null; // 地図（最初に開いたときに作る）
 let markerLayer = null; // 地図の上に置いた写真のまとまり
+let showingNZ = false; // 地図でニュージーランドを見ているかどうか（開いたときは日本）
+let countryBtn = null; // 日本とニュージーランドを切り替える、地図の右上の小さいボタン
 
-// 記録の位置（緯度・経度）を調べる。市町村を選んでいなければ県庁所在地
+// 記録の位置（緯度・経度）を調べる。市町村を選んでいなければ県庁所在地（ニュージーランドは地方の中心の町）
 function getLatLng(record) {
-  const data = CITY_DATA[record.pref];
+  const data = PLACE_DATA[record.pref];
   const cityName = record.city || data.capital;
   const city = data.cities.find((c) => c.name === cityName);
   return [city.lat, city.lng];
@@ -381,16 +401,37 @@ function renderMap() {
   // 最初に開いたときだけ、地図を作る
   if (!map) {
     map = L.map(mapBox, { minZoom: 4, maxZoom: 12 });
-        L.geoJSON(JAPAN_GEO, {
-      style: { color: '#c9a68c', weight: 1, fillColor: '#fffaf3', fillOpacity: 1 },
-      interactive: false,
-      attribution: 'Natural Earth',
-    }).addTo(map);
+    // 日本とニュージーランドの形を描く
+    for (const geo of [JAPAN_GEO, NZ_GEO]) {
+      L.geoJSON(geo, {
+        style: { color: '#c9a68c', weight: 1, fillColor: '#fffaf3', fillOpacity: 1 },
+        interactive: false,
+        attribution: 'Natural Earth',
+      }).addTo(map);
+    }
+
+    // 右上に、日本とニュージーランドを切り替える小さいボタンを置く
+    countryBtn = L.DomUtil.create('button', 'country-btn');
+    countryBtn.type = 'button';
+    L.DomEvent.disableClickPropagation(countryBtn); // ボタンを押しても、地図を押したことにしない
+    countryBtn.addEventListener('click', () => {
+      showingNZ = !showingNZ;
+      filterPref.value = ''; // 県の絞り込みは外す（絞り込んだ県の国に、地図が戻ってしまうため）
+      renderList();
+    });
+    const countryControl = L.control({ position: 'topright' });
+    countryControl.onAdd = () => countryBtn;
+    countryControl.addTo(map);
   }
 
   // 隠れていた地図を表示したときは、大きさを測り直す
   map.invalidateSize();
-  
+
+  // 県（地方）で絞り込んでいるときは、その県がある国の地図にする
+  if (filterPref.value) showingNZ = isNZ(filterPref.value);
+  countryBtn.textContent = showingNZ ? '🇳🇿' : '🇯🇵'; // 今見ている国の国旗を出す
+  countryBtn.setAttribute('aria-label', showingNZ ? '日本の地図にする' : 'ニュージーランドの地図にする');
+
   // 前に置いた写真を片付けてから、置き直す
   if (markerLayer) markerLayer.remove();
   markerLayer = L.layerGroup().addTo(map);
@@ -420,14 +461,14 @@ function renderMap() {
     });
     marker.on('click', () => openDetail(record));
         cluster.addLayer(marker); // 全部の写真を袋に入れる（同じ場所のものだけがまとまる）
-    places.push(place);
+    if (isNZ(record.pref) === showingNZ) places.push(place); // 見ている国の写真だけ、範囲合わせに使う
   }
 
-  // 写真が全部入るように、地図の範囲を合わせる
+  // 見ている国の写真が全部入るように、地図の範囲を合わせる
   if (places.length > 0) {
     map.fitBounds(places, { padding: [40, 40], maxZoom: 12 });
   } else {
-    map.setView([36.5, 137.5], 5);
+    map.setView(showingNZ ? [-41, 173] : [36.5, 137.5], 5);
   }
 }
 
